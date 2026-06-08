@@ -208,7 +208,8 @@ void CalculiXstep(int argc,char argv[][133],ITG **nelemloadp,double **xloadp,
     nzsprevstep[3],memmpcref_,mpcfreeref,maxlenmpcref,*nodempcref=NULL,
     *ikmpcref=NULL,isens,namtot,nstam,ndamp,nef,inp_size,
     *ipoinp_sav=NULL,*inp_sav=NULL,irefineloop=0,icoordinate=0,
-    *nodedesi=NULL,ndesi=0,nobjectstart=0,nfc_,ndc_,nfc,ndc,*ikdc=NULL;
+    *nodedesi=NULL,ndesi=0,nobjectstart=0,nfc_,ndc_,nfc,ndc,*ikdc=NULL,
+    irestart=0;
 
   static ITG *meminset=NULL,*rmeminset=NULL;
 
@@ -226,7 +227,7 @@ void CalculiXstep(int argc,char argv[][133],ITG **nelemloadp,double **xloadp,
     *cs=NULL,*tietol=NULL,*fmpc=NULL,*prop=NULL,*t0g=NULL,*t1g=NULL,
     *xbody=NULL,*xbodyold=NULL,*coefmpcref=NULL,*dacon=NULL,*vel=NULL,
     *velo=NULL,*veloo=NULL,energy[5],*ratiorfn=NULL,*dgdxglob=NULL,
-    *g0=NULL,*xdesi=NULL,*coeffc=NULL,*edc=NULL;
+    *g0=NULL,*xdesi=NULL,*coeffc=NULL,*edc=NULL,*accrestart=NULL;
     
   static double ctrl[57];
 
@@ -796,7 +797,7 @@ void CalculiXstep(int argc,char argv[][133],ITG **nelemloadp,double **xloadp,
 			&mpcfreeref,&maxlenmpcref,&memmpc_,&isens,&namtot,&nstam,
 			dacon,vel,&nef,velo,veloo,ne2boun,itempuser,
 			irobustdesign,irandomtype,randomval,&nfc,&nfc_,coeffc,
-			ikdc,&ndc,&ndc_,edc));
+			ikdc,&ndc,&ndc_,edc,&irestart,accrestart));
 
 
       // start change DLR
@@ -1422,7 +1423,7 @@ void CalculiXstep(int argc,char argv[][133],ITG **nelemloadp,double **xloadp,
 		    &nintpoint,&mortar,&ifacecount,typeboun,&islavsurf,
 		    &pslavsurf,&clearini,&nmat,xmodal,&iaxial,&inext,&nprop,
 		    &network,orname,vel,&nef,velo,veloo,energy,itempuser,
-		    ipobody,&inewton,t0g,t1g,&ifreebody);
+		    ipobody,&inewton,t0g,t1g,&ifreebody,irestart,accrestart);
 
 	  memmpc_=mpcinfo[0];mpcfree=mpcinfo[1];icascade=mpcinfo[2];
 	  maxlenmpc=mpcinfo[3];
@@ -1796,7 +1797,7 @@ void CalculiXstep(int argc,char argv[][133],ITG **nelemloadp,double **xloadp,
 		    &nobject_,&objectset,nmethod,iperturb,&irefineloop,
 		    &iparentel,&iprfn,&konrfn,&ratiorfn,&heading,
 		    &nodedesi,&dgdxglob,&g0,&nuel_,&xdesi,&nfc,&coeffc,
-		    &ikdc,&edc);
+		    &ikdc,&edc,&accrestart);
 
 	/* closing and reopening the output files */
 	
@@ -1968,7 +1969,7 @@ void CalculiXstep(int argc,char argv[][133],ITG **nelemloadp,double **xloadp,
 			      &mortar,&nintpoint,&ifacecount,islavsurf,
 			      pslavsurf,clearini,irstrt,vel,&nef,velo,veloo,
 			      ne2boun,&memmpc_,heading,&nheading_,&network,
-			      &nfc,&ndc,coeffc,ikdc,edc));
+			      &nfc,&ndc,coeffc,ikdc,edc,accold));
       }
     } 
 
@@ -2033,7 +2034,7 @@ void CalculiXstep(int argc,char argv[][133],ITG **nelemloadp,double **xloadp,
 	      &nobject_,&objectset,nmethod,iperturb,&irefineloop,
 	      &iparentel,&iprfn,&konrfn,&ratiorfn,&heading,
 	      &nodedesi,&dgdxglob,&g0,&nuel_,&xdesi,&nfc,&coeffc,
-	      &ikdc,&edc);
+	      &ikdc,&edc,&accrestart);
   
 #ifdef CALCULIX_MPI
   MPI_Finalize();

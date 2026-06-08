@@ -48,7 +48,8 @@
      &     iuel,nuel_,nodempcref,coefmpcref,ikmpcref,memmpcref_,
      &     mpcfreeref,maxlenmpcref,memmpc_,isens,namtot,nstam,dacon,
      &     vel,nef,velo,veloo,ne2boun,itempuser,irobustdesign,
-     &     irandomtype,randomval,nfc,nfc_,coeffc,ikdc,ndc,ndc_,edc)
+     &     irandomtype,randomval,nfc,nfc_,coeffc,ikdc,ndc,ndc_,edc,
+     &     irestart,accrestart)
 !     
       implicit none
 !     
@@ -125,7 +126,7 @@
      &     nodempcref(3,*),ikmpcref(*),memmpcref_,mpcfreeref,
      &     maxlenmpcref,memmpc_,isens,iamplitudedefault,namtot,
      &     nstam,ier,nef,ne2boun(2,*),itempuser(*),irobustdesign(3),
-     &     irandomtype(*),iparentel,nfc,nfc_,ikdc(*),ndc,ndc_
+     &     irandomtype(*),iparentel,nfc,nfc_,ikdc(*),ndc,ndc_,irestart
 !     
       real*8 co(3,*),xboun(*),coefmpc(*),xforc(*),fmpc(*),
      &     xload(2,*),alzero(*),offset(2,*),prop(*),pslavsurf(3,*),
@@ -141,7 +142,8 @@
      &     xbody(7,*),xbodyold(7,*),t0g(2,*),t1g(2,*),
      &     fei(3),tinc,tper,xmodal(*),tmin,tmax,tincf,
      &     alpha(*),physcon(*),coefmpcref(*),vel(nef,*),velo(*),
-     &     veloo(*),randomval(2,*),coeffc(0:6,*),edc(12,*)
+     &     veloo(*),randomval(2,*),coeffc(0:6,*),edc(12,*),
+     &     accrestart(0:mi(2),*)
 !     
       save solid,ianisoplas,out3d,pretension
 !     
@@ -994,7 +996,7 @@ c
      &       t0g,t1g,nprop,ielprop,prop,mortar,nintpoint,ifacecount,
      &       islavsurf,pslavsurf,clearini,ier,vel,nef,velo,veloo,
      &       ne2boun,heading,network,irestartread,nfc,ndc,coeffc,
-     &       ikdc,edc)
+     &       ikdc,edc,irestart,accrestart)
 !     
       elseif(textpart(1)(1:18).eq.'*RETAINEDNODALDOFS') then
         call retainednodaldofss(inpc,textpart,set,istartset,

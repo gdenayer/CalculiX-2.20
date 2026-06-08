@@ -13,12 +13,12 @@ while(<>){
 
 # inserting the date into ccx_2.20step.c
 
-@ARGV="ccx_2.20step.c";
-$^I=".old";
-while(<>){
-    s/You are using an executable made on.*/You are using an executable made on $date\\n");/g;
-    print;
-}
+# @ARGV="ccx_2.20step.c";
+# $^I=".old";
+# while(<>){
+#     s/You are using an executable made on.*/You are using an executable made on $date\\n");/g;
+#     print;
+# }
 
 # inserting the date into frd.c
 
@@ -30,5 +30,5 @@ while(<>){
 }
 
 system "rm -f ccx_2.20.c.old";
-system "rm -f ccx_2.20step.c.old";
+# system "rm -f ccx_2.20step.c.old";
 system "rm -f frd.c.old";

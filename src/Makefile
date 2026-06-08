@@ -1,9 +1,19 @@
 
-CFLAGS = -Wall -O2  -I ../../../SPOOLES.2.2 -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
-FFLAGS = -Wall -O2
+# Intel Compiler
+#CFLAGS = -O2  -I/opt/SPOOLES/2.2/ -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT -DUSE_MT
+CFLAGS = -O2  -I/opt/SPOOLES/2.2/ -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
+FFLAGS = -O2
+# GNU compiler
+##CFLAGS = -Wall -O2  -I/opt/SPOOLES/2.2/ -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT -DUSE_MT
+#CFLAGS = -Wall -O2  -I/opt/SPOOLES/2.2/ -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
+#FFLAGS = -Wall -O2
 
-CC=cc
-FC=gfortran
+# Intel Compiler
+CC=mpiicc
+FC=mpiifort
+# GNU compiler
+#CC=cc
+#FC=gfortran
 
 .c.o :
 	$(CC) $(CFLAGS) -c $<
@@ -18,15 +28,14 @@ OCCXF = $(SCCXF:.f=.o)
 OCCXC = $(SCCXC:.c=.o)
 OCCXMAIN = $(SCCXMAIN:.c=.o)
 
-DIR=../../../SPOOLES.2.2
+DIR=/opt/SPOOLES/2.2
 
-LIBS = \
-       $(DIR)/spooles.a \
-	../../../ARPACK/libarpack_INTEL.a \
-       -lpthread -lm -lc
+#LIBS = $(DIR)/spooles.a -larpack -llapack -lblas -lpthread -lm -lc
+LIBS = $(DIR)/spooles.a -larpack -llapack -lblas -lpthread -lm -lc
 
-ccx_2.20: $(OCCXMAIN) ccx_2.20.a  $(LIBS)
-	./date.pl; $(CC) $(CFLAGS) -c ccx_2.20.c; $(FC)  -Wall -O2 -o $@ $(OCCXMAIN) ccx_2.20.a $(LIBS) -fopenmp
+## Intel Compiler
+ccx_2.20: $(OCCXMAIN) ccx_2.20.a
+	./date.pl; $(CC) $(CFLAGS) -c ccx_2.20.c; $(FC)  -O2 -nofor-main  -o $@ $(OCCXMAIN) ccx_2.20.a $(LIBS) -qopenmp
 
 ccx_2.20.a: $(OCCXF) $(OCCXC)
 	ar vr $@ $?

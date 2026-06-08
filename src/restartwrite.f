@@ -36,7 +36,8 @@
      &     physcon,ctrl,typeboun,fmpc,tieset,ntie,tietol,nslavs,t0g,t1g,
      &     nprop,ielprop,prop,mortar,nintpoint,ifacecount,islavsurf,
      &     pslavsurf,clearini,irstrt,vel,nef,velo,veloo,ne2boun,
-     &     memmpc_,heading,nheading_,network,nfc,ndc,coeffc,ikdc,edc)
+     &     memmpc_,heading,nheading_,network,nfc,ndc,coeffc,ikdc,edc,
+     &     accrestart)
 !     
 !     writes all information needed for a restart to file
 !     
@@ -83,7 +84,7 @@
      &     shcon(*),cocon(*),sti(*),ener(*),xstate(*),pslavsurf(*),
      &     qaold(2),cs(*),physcon(*),ctrl(*),prop(*),coeffc(*),
      &     ttime,fmpc(*),xbody(*),xbodyold(*),vel(*),velo(*),veloo(*),
-     &     edc(*)
+     &     edc(*),accrestart(*)
 !     
       mt=mi(2)+1
 !     
@@ -406,6 +407,7 @@
       write(15)(vold(i),i=1,mt*nk)
       if((nmethod.eq.4).or.((nmethod.eq.1).and.(iperturb(1).ge.2))) then
          write(15)(veold(i),i=1,mt*nk)
+         write(15)(accrestart(i),i=1,mt*nk)
       endif
 !     
 !     CFD results at the element centers

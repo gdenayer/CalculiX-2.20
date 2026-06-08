@@ -80,7 +80,8 @@ int main(int argc,char *argv[])
     nzsprevstep[3],memmpcref_,mpcfreeref,maxlenmpcref,*nodempcref=NULL,
     *ikmpcref=NULL,isens,namtot,nstam,ndamp,nef,inp_size,
     *ipoinp_sav=NULL,*inp_sav=NULL,irefineloop=0,icoordinate=0,
-    *nodedesi=NULL,ndesi=0,nobjectstart=0,nfc_,ndc_,nfc,ndc,*ikdc=NULL;
+    *nodedesi=NULL,ndesi=0,nobjectstart=0,nfc_,ndc_,nfc,ndc,*ikdc=NULL,
+    irestart=0;
 
   ITG *meminset=NULL,*rmeminset=NULL;
 
@@ -98,7 +99,7 @@ int main(int argc,char *argv[])
     *cs=NULL,*tietol=NULL,*fmpc=NULL,*prop=NULL,*t0g=NULL,*t1g=NULL,
     *xbody=NULL,*xbodyold=NULL,*coefmpcref=NULL,*dacon=NULL,*vel=NULL,
     *velo=NULL,*veloo=NULL,energy[5],*ratiorfn=NULL,*dgdxglob=NULL,
-    *g0=NULL,*xdesi=NULL,*coeffc=NULL,*edc=NULL;
+    *g0=NULL,*xdesi=NULL,*coeffc=NULL,*edc=NULL,*accrestart=NULL;
     
   double ctrl[57];
 
@@ -150,7 +151,7 @@ int main(int argc,char *argv[])
   printf("software, and you are welcome to redistribute it under\n");
   printf("certain conditions, see gpl.htm\n\n");
   printf("************************************************************\n\n");
-  printf("You are using an executable made on Sun Jul 31 18:08:37 CEST 2022\n");
+  printf("You are using an executable made on Fri Jan 24 09:11:43 CET 2025\n");
   fflush(stdout);
 
   NNEW(ipoinp,ITG,2*nentries);
@@ -426,6 +427,7 @@ int main(int argc,char *argv[])
 
       NNEW(vold,double,mt*nk_);
       NNEW(veold,double,mt*nk_);
+      NNEW(accrestart,double,mt*nk_);
 
       /* CFD-results */
 
@@ -492,10 +494,13 @@ int main(int argc,char *argv[])
       if((nmethod!=4)&&(nmethod!=5)&&(nmethod!=8)&&(nmethod!=9)&& 
 	 ((abs(nmethod)!=1)||(iperturb[0]<2))){
         NNEW(veold,double,mt*nk_);
+	NNEW(accrestart,double,mt*nk_);
       }
       else{
 	RENEW(veold,double,mt*nk_);
 	DMEMSET(veold,mt*nk,mt*nk_,0.);
+	RENEW(accrestart,double,mt*nk_);
+	DMEMSET(accrestart,mt*nk,mt*nk_,0.);
       }
       RENEW(vold,double,mt*nk_);
       DMEMSET(vold,mt*nk,mt*nk_,0.);
@@ -629,7 +634,7 @@ int main(int argc,char *argv[])
 		      &mpcfreeref,&maxlenmpcref,&memmpc_,&isens,&namtot,&nstam,
 		      dacon,vel,&nef,velo,veloo,ne2boun,itempuser,
 		      irobustdesign,irandomtype,randomval,&nfc,&nfc_,coeffc,
-		      ikdc,&ndc,&ndc_,edc));
+		      ikdc,&ndc,&ndc_,edc,&irestart,accrestart));
     
     SFREE(idefforc);SFREE(idefload);SFREE(idefbody);
 
@@ -1032,9 +1037,11 @@ int main(int argc,char *argv[])
     if((nmethod==4)||(nmethod==5)||(nmethod==8)||(nmethod==9)||
        ((abs(nmethod)==1)&&(iperturb[0]>=2))){
       RENEW(veold,double,mt*nk);
+      RENEW(accrestart,double,mt*nk);
     }
     else{
       SFREE(veold);
+      SFREE(accrestart);
     }
 
     if((nmethod==4)&&(iperturb[0]>1)){
@@ -1266,7 +1273,7 @@ int main(int argc,char *argv[])
 		    &nintpoint,&mortar,&ifacecount,typeboun,&islavsurf,
 		    &pslavsurf,&clearini,&nmat,xmodal,&iaxial,&inext,&nprop,
 		    &network,orname,vel,&nef,velo,veloo,energy,itempuser,
-		    ipobody,&inewton,t0g,t1g,&ifreebody);
+		    ipobody,&inew,ton,t0g,t1g,&ifreebody,irestart,accrestart);
 
 	  memmpc_=mpcinfo[0];mpcfree=mpcinfo[1];icascade=mpcinfo[2];
 	  maxlenmpc=mpcinfo[3];
@@ -1646,7 +1653,7 @@ int main(int argc,char *argv[])
 		    &nobject_,&objectset,&nmethod,iperturb,&irefineloop,
 		    &iparentel,&iprfn,&konrfn,&ratiorfn,&heading,
 		    &nodedesi,&dgdxglob,&g0,&nuel_,&xdesi,&nfc,&coeffc,
-		    &ikdc,&edc);
+		    &ikdc,&edc,&accrestart);
 
 	/* closing and reopening the output files */
 	
@@ -1819,7 +1826,7 @@ int main(int argc,char *argv[])
 			      &mortar,&nintpoint,&ifacecount,islavsurf,
 			      pslavsurf,clearini,irstrt,vel,&nef,velo,veloo,
 			      ne2boun,&memmpc_,heading,&nheading_,&network,
-			      &nfc,&ndc,coeffc,ikdc,edc));
+			      &nfc,&ndc,coeffc,ikdc,edc,accold));
       }
     } 
 	  
@@ -1865,7 +1872,7 @@ int main(int argc,char *argv[])
 	      &nobject_,&objectset,&nmethod,iperturb,&irefineloop,
 	      &iparentel,&iprfn,&konrfn,&ratiorfn,&heading,
 	      &nodedesi,&dgdxglob,&g0,&nuel_,&xdesi,&nfc,&coeffc,
-	      &ikdc,&edc);
+	      &ikdc,&edc,&accrestart);
   
 #ifdef CALCULIX_MPI
   MPI_Finalize();
