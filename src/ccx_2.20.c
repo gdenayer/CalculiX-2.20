@@ -1273,7 +1273,7 @@ int main(int argc,char *argv[])
 		    &nintpoint,&mortar,&ifacecount,typeboun,&islavsurf,
 		    &pslavsurf,&clearini,&nmat,xmodal,&iaxial,&inext,&nprop,
 		    &network,orname,vel,&nef,velo,veloo,energy,itempuser,
-		    ipobody,&inew,ton,t0g,t1g,&ifreebody,irestart,accrestart);
+		    ipobody,&inewton,t0g,t1g,&ifreebody,irestart,accrestart);
 
 	  memmpc_=mpcinfo[0];mpcfree=mpcinfo[1];icascade=mpcinfo[2];
 	  maxlenmpc=mpcinfo[3];
